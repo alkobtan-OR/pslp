@@ -57,14 +57,65 @@ a higher tier than item $i$. For instance, if items 6 and 2 are stacked in the s
 item 6. Additionally if $p_j < p_i$, it means that item $i$ would be retrieved earlier than item $j$. To do so, item $j$ would be relocated to somewhere else
 first to retrieve item $i$. Therefore, item $j$ is called a blocking item. For example, item 6 blocks item 1 in solution 1, where it does not block any item in solution 2.  
 
-Let, $c_{ij} = 1$ if item $j$ would be a blocking item if it is stacked with item $i$ in the same stack satisfying the order of arrival and the first-come-first-stacked policy. And
-$y_{ij} = 1$ if item $i$ and $j$ are stacked in the same stack, 0 otherwise. Therefore the objective function is: 
+Formally, the blocking relation is defined as:
 
-$$ J(u) = \sum_{i=1}^N \sum_{j=1}^N c_{ij}\, y_{ij} \quad \text{and the objective is} \quad \min_{u} J(u) $$
+$$
+c_{ij} =
+\begin{cases}
+1, & \text{if item $i$ arrives before item $j$, $u_i = u_j$, and $p_j < p_i$}, \\
+0, & \text{otherwise}.
+\end{cases}
+$$
 
-A decision variable defined as $x_{is} = 1$ if item $i$ is stored in stack $s$, 0 otherwise. 
+We define $y_{ij} = 1$ if items $i$ and $j$ are stored in the same stack, and $y_{ij} = 0$ otherwise.
 
-A solution is a vector $u = (u_1, u_2, \dots, u_N)$ such that $1 \leq u_i \leq S$ and $\sum_{i=1}^{N} [u_i = s] = T \quad \forall\, 1 \leq s \leq S$, where $u_i$ denotes the stack number where item $i$ is stacked and $u_i=s$ if $x_{is} = 1$ and $0$ otherwise.  
+The total number of blockings in a solution $u$ is:
+
+$$
+J(u) = \sum_{i=1}^N \sum_{j=1}^N c_{ij}\, y_{ij}
+$$
+
+The optimisation problem is therefore:
+
+$$
+\min_{u} J(u)
+$$
+
+A second decision variable is defined as $x_{is} = 1$ if item $i$ is stored in stack $s$, and $x_{is} = 0$ otherwise. These variables satisfy the following constraints:
+
+Each item is placed in exactly one stack:
+
+$$
+\sum_{s=1}^S x_{is} = 1 \quad \forall i
+$$
+
+Each stack contains exactly $T$ items:
+
+$$
+\sum_{i=1}^N x_{is} = T \quad \forall s
+$$
+
+Relation between $y_{ij}$ and $x_{is}$:
+
+$$
+y_{ij} = \sum_{s=1}^S x_{is} \cdot x_{js}
+$$
+
+Finally, a solution can also be represented as a vector:
+
+$$
+u = (u_1, u_2, \dots, u_N), \quad u_i \in \{1,\dots,S\},
+$$
+
+with
+
+$$
+\sum_{i=1}^{N} [u_i = s] = T \quad \forall\ 1 \leq s \leq S
+$$
+
+where $u_i$ denotes the stack assigned to item $i$.
+
+
 
 
 ## Instance data file
