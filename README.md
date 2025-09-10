@@ -64,7 +64,7 @@ $$ J(u) = \sum_{i=1}^N \sum_{j=1}^N c_{ij}\, y_{ij} \quad \text{and the objectiv
 
 A decision variable defined as $x_{is} = 1$ if item $i$ is stored in stack $s$, 0 otherwise. 
 
-A solution is a vector $u = (u_1, u_2, \dots, u_N)$ such that $1 \leq u_i \leq S$ and $\sum_{i=1}^{N} [u_i = s] = T \quad \forall, 1 \leq s \leq S, where $u_i$ denotes the stack number where item $i$ is stacked and $u_i=s$ if $x_{is} = 1$ and $0$ otherwise.  
+A solution is a vector $u = (u_1, u_2, \dots, u_N)$ such that $1 \leq u_i \leq S$ and $\sum_{i=1}^{N} [u_i = s] = T \quad \forall\, 1 \leq s \leq S$, where $u_i$ denotes the stack number where item $i$ is stacked and $u_i=s$ if $x_{is} = 1$ and $0$ otherwise.  
 
 
 ## Instance data file
