@@ -62,7 +62,7 @@ Formally, the blocking relation is defined as:
 $$
 c_{ij} =
 \begin{cases}
-1, & \text{if item $i$ arrives before item $j$, $u_i = u_j$, and $p_j < p_i$}, \\
+1, & \text{if item $i$ is below item $j$ in the same stack and $p_i < p_j$}, \\
 0, & \text{otherwise}.
 \end{cases}
 $$
