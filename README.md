@@ -7,7 +7,7 @@ SPDX-License-Identifier: CC-BY-4.0
 
 # The Parallel Stack Loading Problem Minimizing the Number of Blockings 
 
-Mohamed ElWakil, Production Engineering and Mechanical Design Departement, Faculty of Engineering, Tanta University, Tanta, Egypt 
+Mohamed ElWakil, Production Engineering and Mechanical Design Department, Faculty of Engineering, Tanta University, Tanta, Egypt 
 
 Tomás Marques, Portugal
 
@@ -30,16 +30,16 @@ The problem consists in determining how to stack the arriving items in a storage
 ## Detailed description
 
 The parallel stack loading problem considers stacking $N$ items. For each item, there is an arriving order $i$ and a retrieval order $p_i$; the larger the value of $p_i$, the later 
-the retrieval date. The objective is stack the items in a storage bay which is empty at the beginning of the planning horizon. The storage bay is 
+the retrieval date. The objective is to stack the items in a storage bay which is empty at the beginning of the planning horizon. The storage bay is 
 composed of $S$ vertical stacks, where at most $T$ items can be stored in each stack $(ST = N)$. 
 
-Lets say we have a group of itmes with $N = 6$ to be stacked in a storage bay with $S = 2$ and $T = 3$. If the arrival order is as follows
+Let's say we have a group of items with $N = 6$ to be stacked in a storage bay with $S = 2$ and $T = 3$. If the arrival order is as follows
 #### Arrival order (instance) 
 ```
 [4] <-- [1] <-- [6] <-- [2] <-- [3] <-- [5]
 ```
 Item 4 is the first to arrive, then item 1 until item 5 is the last to arrive. Item is labelled with its retrieval order as we say item $p_i$. Based on that, item 6 is the third to
-arrive and the last one to be retrieved. A number of different solution can be generted for stacking the mentioned items. For example, 
+arrive and the last one to be retrieved. A number of different solution can be generated for stacking the mentioned items. For example, 
 
 ##### Storage bay (solution)
 ```
@@ -54,17 +54,17 @@ T1   |   [4]   [6]                                      T1   |   [4]   [1]
 
 For a pair of items, if item $p_i$ arrives before item $p_j$, if both items are stored in the same stack, item $p_j$ will be at 
 a higher tier than item $i$. For instance, if items 6 and 2 are stacked in the same stack as in solution 2, item 2 is at tier 3 while item 6 is at tier 2 as item arrives before 
-item 6. Additionally if $p_j < p_i$, it means that item $i$ whould be retrieved earlier than item $j$. To do so, item $j$ would be relocated to somewhere else
-first to retreive item $i$. Therefore, item $j$ is called a blocking item. For example, item 6 blocks item 1 at solution 1, where it does not block any item at solution 1.  
+item 6. Additionally if $p_j < p_i$, it means that item $i$ would be retrieved earlier than item $j$. To do so, item $j$ would be relocated to somewhere else
+first to retrieve item $i$. Therefore, item $j$ is called a blocking item. For example, item 6 blocks item 1 in solution 1, where it does not block any item in solution 2.  
 
 Let, $c_{ij} = 1$ if item $j$ would be a blocking item if it is stacked with item $i$ in the same stack satisfying the order of arrival and the first-come-first-stacked policy. And
 $y_{ij} = 1$ if item $i$ and $j$ are stacked in the same stack, 0 otherwise. Therefore the objective function is: 
 
-$$ \min \sum_i \sum_j c_{ij} y_{ij}$$
+$$ J(u) = \sum_{i=1}^N \sum_{j=1}^N c_{ij}\, y_{ij} \quad \text{and the objective is} \quad \min_{u} J(u) $$
 
 A decision variable defined as $x_{is} = 1$ if item $i$ is stored in stack $s$, 0 otherwise. 
 
-A solution is a vectore $u = (u_1, u_2, \dots, u_N)$ such that $1 \leq u_i \leq S$ and $\sum_{i=1}^{N} [u_i = s] = T$ for all $1 \leq s \leq S$, where $u_i$ denotes the stack number
+A solution is a vector $u = (u_1, u_2, \dots, u_N)$ such that $1 \leq u_i \leq S$ and $\sum_{i=1}^{N} [u_i = s] = T \quad \forall \; 1 \leq s \leq S$, where $u_i$ denotes the stack number
 where item $i$ is stacked and $u_i=s$ if $x_{is} = 1$ and $0$ otherwise.  
 
 
@@ -73,7 +73,7 @@ where item $i$ is stacked and $u_i=s$ if $x_{is} = 1$ and $0$ otherwise.
 The first line of the input contains two space-separated integers, $T$ and
 $S$, where $T$ is the number of tiers, and $S$ is the number of stacks.
 
-The second line contains $N$ the number of itmes to be stored. 
+The second line contains $N$ the number of items to be stored. 
 
 The third line contains $N$ space-separated integers, $p_1, p_2, \dots, p_N$,
 corresponding to the number of items represented by their retrieval order.
@@ -98,7 +98,7 @@ A solution file lists the stack numbers $u_1, u_2, \dots, u_N$.
 1 1 2 3 3 1 2 3 3 1 2 2 
 ```
 
-$J(u) = 7
+$J(u) = 7$
 
 ### Explanation
 
