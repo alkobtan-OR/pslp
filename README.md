@@ -75,7 +75,7 @@ $S$, where $T$ is the number of tiers, and $S$ is the number of stacks.
 
 The second line contains $N$ the number of itmes to be stored. 
 
-The third line contains $N$ space-separated integers, $p_1, p_2, \dots, p_M$,
+The third line contains $N$ space-separated integers, $p_1, p_2, \dots, p_N$,
 corresponding to the number of items represented by their retrieval order.
 
 ## Solution file
