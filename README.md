@@ -9,7 +9,7 @@ SPDX-License-Identifier: CC-BY-4.0
 
 Mohamed ElWakil, Production Engineering and Mechanical Design Department, Faculty of Engineering, Tanta University, Tanta, Egypt 
 
-Tomás Marques, Portugal
+Tomás Marques, Department of Production and Systems, University of Minho, Portugal
 
 Copyright 2025 Mohamed ElWakil and Tomás Marques 
 
@@ -25,7 +25,7 @@ These relocations represent additional handling operations, and minimizing their
 
 ## Task
 
-The problem consists in determining how to stack the arriving items in a storage bay with definite area so that the number of blockings is minimized. 
+The problem consists of determining how to stack the arriving items in a storage bay with definite area so that the number of blockings is minimized. 
 
 ## Detailed description
 
@@ -38,8 +38,8 @@ Let's say we have a group of items with $N = 6$ to be stacked in a storage bay w
 ```
 [4] <-- [1] <-- [6] <-- [2] <-- [3] <-- [5]
 ```
-Item 4 is the first to arrive, then item 1 until item 5 is the last to arrive. Item is labelled with its retrieval order as we say item $p_i$. Based on that, item 6 is the third to
-arrive and the last one to be retrieved. A number of different solution can be generated for stacking the mentioned items. For example, 
+Item 4 is the first to arrive, then item 1 until item 5 is the last to arrive. Each item is labelled with its retrieval order as we say item $p_i$. Based on that, item 6 is the third to
+arrive and the last one to be retrieved. A number of different solutions can be generated for stacking the mentioned items. For example, 
 
 ##### Storage bay (solution)
 ```
@@ -152,7 +152,7 @@ $J(u) = 7$
 
 ### Explanation
 
-There are $7$ blocking items. items 7, 11, 1, 12 are stacked in stack 1 following the same order from bottom to top since it is the order of arrival. Such stack has two blocking
+There are $7$ blocking items. Items 7, 11, 1, 12 are stacked in stack 1 following the same order from bottom to top since it is the order of arrival. Such stack has two blocking
 items: items 11 and 12. Stack 2: blocking items 4 and 5. Stack 3: blocking items 6, 9, and 10. 
 
 ## Acknowledgement
