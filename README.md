@@ -64,7 +64,7 @@ $$ \min \sum_i \sum_j c_{ij} y_{ij}$$
 
 A decision variable defined as $x_{is} = 1$ if item $i$ is stored in stack $s$, 0 otherwise. 
 
-A solution is a vectore $u = (u_1, u_2, \dots, u_N)$ such that $1 \leq u_i \leq S$ and $ \sum {i=1}^{N} [u_i = s] = H for all $1 \leq s \leq S$, where $u_i$ denotes the stack number
+A solution is a vectore $u = (u_1, u_2, \dots, u_N)$ such that $1 \leq u_i \leq S$ and $\sum_{i=1}^{N} [u_i = s] = T$ for all $1 \leq s \leq S$, where $u_i$ denotes the stack number
 where item $i$ is stacked and $u_i=s$ if $x_{is} = 1$ and $0$ otherwise.  
 
 
