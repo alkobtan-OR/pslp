@@ -58,7 +58,7 @@ item 6. Additionally if $p_j < p_i$, it means that item $i$ whould be retrieved 
 first to retreive item $i$. Therefore, item $j$ is called a blocking item. For example, item 6 blocks item 1 at solution 1, where it does not block any item at solution 1.  
 
 Let, $c_{ij} = 1$ if item $j$ would be a blocking item if it is stacked with item $i$ in the same stack satisfying the order of arrival and the first-come-first-stacked policy. And
-$y_{ij} = 1 if item $i$ and $j$ are stacked in the same stack, 0 otherwise. Therefore the objective function is: 
+$y_{ij} = 1$ if item $i$ and $j$ are stacked in the same stack, 0 otherwise. Therefore the objective function is: 
 
 $$ \min \sum_i \sum_j c_{ij} y_{ij}$$
 
