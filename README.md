@@ -54,7 +54,7 @@ T1   |   [4]   [6]                                      T1   |   [4]   [1]
 
 For a pair of items, if item $p_i$ arrives before item $p_j$, if both items are stored in the same stack, item $p_j$ will be at 
 a higher tier than item $i$. For instance, if items 6 and 2 are stacked in the same stack as in solution 2, item 2 is at tier 3 while item 6 is at tier 2 as item arrives before 
-item 6. Additionally if $p_j < p_i$, it means that item $i$ would be retrieved earlier than item $j$. To do so, item $j$ would be relocated to somewhere else
+item 6. Additionally if $p_i < p_j$, it means that item $i$ would be retrieved earlier than item $j$. To do so, item $j$ would be relocated to somewhere else
 first to retrieve item $i$. Therefore, item $j$ is called a blocking item. For example, item 6 blocks item 1 in solution 1, where it does not block any item in solution 2.  
 
 Formally, the blocking relation is defined as:
