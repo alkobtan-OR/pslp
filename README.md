@@ -17,7 +17,7 @@ This document is licensed under CC-BY-4.0.
 
 ## Introduction
 
-Items of identical size arrive at a storage bay and are stored in vertical stacks satisfying the first-come-first-stacked policy. After some time, these items must be retrieved according to a sequence that may differ 
+Items such as boxes arrive at a storage bay and are stored in vertical stacks satisfying the first-come-first-stacked policy. After some time, these items must be retrieved according to a retrieval order that may differ 
 from the original storage order. Since the retrieval process operates under a last-in-first-out policy, blocking items may occur. A blocking item is defined as an item whose 
 retrieval date is later than that of other item(s) located beneath it. In such cases, the blocking item must be relocated to enable access to the underlying items. 
 These relocations represent additional handling operations, and minimizing their number is a key objective in optimizing the efficiency of the storage and retrieval process. 
@@ -25,18 +25,17 @@ These relocations represent additional handling operations, and minimizing their
 
 ## Task
 
-The problem consists of determining how to stack the arriving items in a storage bay with a fixed area (defined by a number of horizontal tiers and vertical stacks) so that the number of blockings is minimized. 
+The problem consists of determining how to stack the arriving items in a storage bay with a fixed area (defined by a number of horizontal tiers and vertical stacks) so that the number of blocking relations is minimized. 
 
 ## Detailed description
 
-The parallel stack loading problem considers stacking $N$ items. For each item, there is an arrival order $i$ and a retrieval order $p_i$; the larger the value of $p_i$, the later 
-the retrieval date. The objective is to stack the items in a storage bay which is empty at the beginning of the planning horizon. The storage bay is composed of $S$ vertical stacks, where a maximum of $T$ items can be stored in each stack.
+The parallel stack loading problem considers stacking $N$ items. For each item, there is an arrival order $i$ and a retrieval order $p_i$; the larger the value of $p_i$, the later the retrieval date. The aim is to stack the items in a storage bay which is composed of $S$ vertical stacks, where a maximum of $T$ items can be stored in each stack.
 
 ### Key characterstics
-1- Items is assumed to have identical sizes and the individual slots of the storage bay mathces this size. 
+1- Items are assumed to have identical sizes and the individual slots of the storage bay mathce this size. 
 2- The bay is assumed to be empty at the beginning of the planning horizon. 
-3- The bay may be full after completing stacking all the items if $ST = N$. Another situation may occur if $ST > N$, therfore the bay will not be fully occupied. 
-4- Items may have or not duplicate retrieval order i.e. more than one item may share the same retreival order. 
+3- The bay may be full after stacking all the items if $ST = N$. Alternatively, if $ST > N$, therfore the bay will not be fully occupied. 
+4- Items may or may not have unique retrieval orders i.e. more than one item may share the same retreival order. 
 
 ### Example - Full bay with unique retrieval orders 
 Let's say we have a group of items with $N = 6$ to be stacked in a storage bay with $T = 3$ and $S = 2$ while the arrival order is as follows:
@@ -57,12 +56,12 @@ T1   |   [4]   [1]                                    T1   |   [4]   [6]
 
 ## Blocking Relation
 
-For a pair of items, if item $i$ arrives earlier than item $j$ ($i < j$) and both items are placed in the same stack, then item $j$ will be above $i$. If, in addition, $p_i < p_j$ (so item $i$ must be retrieved before item $j$), then item $j$ would block item $i$ if they are stacked together.
+For a pair of items, if item $i$ arrives earlier than item $j$ ($i < j$) and both are placed in the same stack, then item $j$ will be above $i$. If, in addition, $p_i < p_j$ (so item $i$ must be retrieved before item $j$), then item $j$ will block item $i$ if they are stacked together.
 
-For example, in solution 1, items [1], [6] and [2] are in the same stack. Item [1] is at tier 1 while item [6] is at tier 2 and item [2] is at tier 1, as item [1] arrives before item [6] which arrives before item [2]. In addition, items [6] and [2] must be relocated first to retrieve item [1]; therefore items [6] and [2] are blocking items. In solution 2, item [6] does not block any item whilst item [2] blocks item [1].
+For example, in solution 1, items [1], [6] and [2] are in the same stack. Item [1] is at tier 1 while item [6] is at tier 2 and item [2] is at tier 3, as item [1] arrives before item [6], which arrives before item [2]. In addition, items [6] and [2] must be relocated first to retrieve item [1]; therefore items [6] and [2] are blocking items. In solution 2, item [6] does not block any item whilst item [2] blocks item [1].
 
 
-For all pairs with $i<j$ (item $i$ arrives earlier than item $j$), define the blocking parameter
+For all pairs with $i<j$ (item $i$ arrives earlier than item $j$), the blocking relation parameter is defined as follows: 
 
 $$
 c_{ij} =
@@ -150,10 +149,10 @@ $$
 \sum_{s=1}^S x_{is} = 1 \quad \forall i \in \{1, \dots, N\}.
 $$
 
-- Each stack contains exactly $T$ items:
+- Each stack contains at most $T$ items:
   
 $$
-\sum_{i=1}^N x_{is} = T \quad \forall s \in \{1, \dots, S\}.
+\sum_{i=1}^N x_{is} \leq T \quad \forall s \in \{1, \dots, S\}.
 $$
 
 ---
@@ -166,30 +165,25 @@ $$
 u = (u_1, u_2, \dots, u_N), \quad u_i \in \{1,\dots,S\}.
 $$
 
+Since the first-come-first-stacked policy is fulfilled, the items of the same stack are stored in the same order of their arrival. In other words, the later arriving items are stacked above the earlier ones. 
 
-with
+Considering the mentioned example, the solution vector $u$ for the solution 1 and solution 2 are as follows: 
+
+**solution 1**: u = (1, 2, 2, 2, 1, 1)
+
+**solution 2**: u = (1, 1, 2, 1, 2, 2) 
+
+It is important to note that a vital condition for the solution represented by $u$ to be feasible is that each stack can hold at most $T$ items, i.e.,
 
 $$
-\sum_{i=1}^{N} [u_i = s] = T \quad \forall s \in \{1,\dots,S\}.
+\sum_{i=1}^{N} [u_i = s] \leq T \quad \forall s \in \{1,\dots,S\}.
 $$
-
-where $u_i$ denotes the stack assigned to item $i$. Since the first-come-first-stacked policy is fulfilled, the items of the same stack are stored with the order of their arrival. In other words, the later arriving items are stacked above the earlier ones. 
-
-A solution file lists the model indices 
-
- in the order in which the 
-T
- model units are to be assembled, one value per line.
 
 ---
 
 ## Instance data file
 
-The input data can be structured in a plain text. It would be important to emphasize that for an instance to be valid,
->   TS=N.
->   - Also remind the reader that the order in which the items are listed
->   corresponds to their order of arrival.
->   - Add a general example of the instance format, for clarity. 
+The input data can be structured in a plain text. 
 
 The first line of the input contains two space-separated integers, $T$ and
 $S$, where $T$ is the number of tiers, and $S$ is the number of stacks.
@@ -201,7 +195,9 @@ where $p_i$ denotes the retrieval order of item $i$ ($1$ = earliest, larger valu
 
 For example:
 $$
-T S  N  p_1 p_2 p_3 \dots p_n
+T S  
+N  
+p_1 p_2 p_3 \dots p_n
 $$
 
 ---
@@ -232,9 +228,10 @@ $J(u) = 10$
 
 The first two lines of the instance defines $T = 4, S = 3$ and $N = 12$. The thrid line list the items in the order of their arrival order. 
 
-##### Arrival order (instance) 
+##### Items 
 ```
-[7] <-- [11] <-- [8] <-- [3] <-- [10] <-- [1] <-- [2] <-- [9] <-- [6] <-- [12] <-- [4] <-- [5]
+i      1      2      3      4      5      6      7      8      9      10      11      12
+p_i   [7]    [11]   [8]    [3]    [10]   [1]    [2]    [9]    [6]    [12]     [4]     [5]
 ```
 
 Regarding the solution file, $u$ can be converted into the following storage bay. 
