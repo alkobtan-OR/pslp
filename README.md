@@ -197,11 +197,12 @@ The third line contains $N$ space-separated integers, $p_1, p_2, \dots, p_N$,
 where $p_i$ denotes the retrieval order of item $i$ ($1$ = earliest, larger values = later). The order in which these integers are listed corresponds to their order of arrival. 
 
 For example:
-$$
-T S  
-N  
-p_1 p_2 p_3 \dots p_n
-$$
+
+```
+T S
+N
+p_1 p_2 p_3 ... p_N
+```
 
 ---
 
