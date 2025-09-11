@@ -242,7 +242,7 @@ Hence, the objective value for this solution is $J(u)=10$.
 
 ## Acknowledgement
 
-000
+This problem statement is based upon work from COST Action Randomised Optimisation Algorithms Research Network (ROAR-NET), CA22137, supported by COST (European Cooperation in Science and Technology).
 
 ## References
 
