@@ -79,7 +79,7 @@ We present two solver formulations of the optimisation problem.
 This compact formulation uses bilinear products:
 
 $$
-y_{ij} = \sum_{s=1}^S x_{is} \cdot x_{js}, \quad \forall i<j,
+y_{ij} = \sum_{s=1}^S x_{is} \cdot x_{js}, \quad \forall\ i < j,
 $$
 
 where $y_{ij}=1$ if items $i$ and $j$ are stored in the same stack.
@@ -87,7 +87,7 @@ where $y_{ij}=1$ if items $i$ and $j$ are stored in the same stack.
 The objective counts blocking pairs:
 
 $$ 
-\min_{u \in \mathcal{U}} J(u) = \sum_{i<j} c_{ij}\, y_{ij}. 
+J(u) = \sum_{i<j} c_{ij}\, y_{ij}, \qquad \min_{u} J(u). 
 $$
 
 This is simple but non-linear, and requires a solver that supports quadratic binary terms.
