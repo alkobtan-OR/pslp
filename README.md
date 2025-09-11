@@ -17,15 +17,15 @@ This document is licensed under CC-BY-4.0.
 
 ## Introduction
 
-Items of identical size arrive at a storage bay and are stored in vertical stacks. After some time, these items must be retrieved according to a sequence that may differ 
-from the original storage order. Since the retrieval process operates under a last-in–first-out (LIFO) policy, blocking items may occur. A blocking item is defined as an item whose 
+Items of identical size arrive at a storage bay and are stored in vertical stacks satisfying the first-come-first-stored policy. After some time, these items must be retrieved according to a sequence that may differ 
+from the original storage order. Since the retrieval process operates under a last-in–first-out policy, blocking items may occur. A blocking item is defined as an item whose 
 retrieval date is later than that of another item(s) located beneath it. In such cases, the blocking item must be relocated to enable access to the underlying items. 
 These relocations represent additional handling operations, and minimizing their number is a key objective in optimizing the efficiency of the storage and retrieval process. 
 (ElWakil _et al._, 2022). 
 
 ## Task
 
-The problem consists of determining how to stack the arriving items in a storage bay with definite area so that the number of blockings is minimized. 
+The problem consists of determining how to stack the arriving items in a storage bay with definite area (defined by a number of horizontal tiers and vertical stacks) so that the number of blockings is minimized. 
 
 ## Detailed description
 
@@ -33,14 +33,12 @@ The parallel stack loading problem considers stacking $N$ items. For each item, 
 the retrieval date. The objective is to stack the items in a storage bay which is empty at the beginning of the planning horizon. The storage bay is 
 composed of $S$ vertical stacks, where at most $T$ items can be stored in each stack $(ST = N)$. 
 
-Let's say we have a group of items with $N = 6$ to be stacked in a storage bay with $S = 2$ and $T = 3$. If the arrival order is as follows
-#### Arrival order (instance) 
+Let's say we have a group of items with $N = 6$ to be stacked in a storage bay with $T = 3$ and $S = 2$ while the arrival order is as follows:
 ```
 [4] <-- [1] <-- [6] <-- [2] <-- [3] <-- [5]
 ```
-Each item is characterised by two intergers: an arrival order $i$ and retrieval order $p_i$. Graphically, for ease of notatin, each item is labelled with its retrieval order. For instance, we say item 1 (or item [4]) is the first one to arrive. In the same way, the second arriving item is item 2 (or item [1]) and item 6 (or item [5]) is the last to arrive. A number of different solutions can be generated for stacking the mentioned items. For example, 
+Graphically, and for ease of notation, each item is labelled with its retrieval order in brackets. For instance, we say item 1 (or item [4]) is the first one to arrive. In the same way, the second arriving item is item 2 (or item [1]) and item 6 (or item [5]) is the last to arrive. A number of different solutions can be generated for stacking the mentioned items. For example, two different solutions (storage bays) are shown. 
 
-##### Storage bays (solutions)
 ```
 T3   |   [2]   [5]                                      T3   |   [5]   [2]
 T2   |   [1]   [3]                                      T2   |   [3]   [6]
@@ -52,9 +50,9 @@ T1   |   [4]   [6]                                      T1   |   [4]   [1]
 #
 
 
-For a pair of items, if item $i$ arrives earlier than item $j$ ($i < j$) and both items are placed in the same stack, then $j$ will be above $i$. If, in addition, $p_i < p_j$ (so $i$ must be retrieved before $j$), then $j$ would block $i$ if they are stacked together.
+For a pair of items, if item $i$ arrives earlier than item $j$ ($i < j$) and both items are placed in the same stack, then item $j$ will be above $i$. If, in addition, $p_i < p_j$ (so item $i$ must be retrieved before item $j$), then item $j$ would block item $i$ if they are stacked together.
 
-For example, in solution 2 , if items [6] and [1] are in the same stack, item [1] is at tier 1 while item [6] (because [1] arrives before [6]). In addition, item [6] must be relocated first to retrieve item [1]; therefore item [6] is a blocking item. In solution 1, item [6] does not block any item.
+For example, in solution 2 , items [6] and [1] are in the same stack. Item [1] is at tier 1 while item [6] as item [1] arrives before item [6]. In addition, item [6] must be relocated first to retrieve item [1]; therefore item [6] is a blocking item. In solution 1, item [6] does not block any item.
 
 ---
 
