@@ -5,7 +5,7 @@ SPDX-FileCopyrightText: 2025 Tomás Marques <tmarques0580@gmail.com>
 SPDX-License-Identifier: CC-BY-4.0
 -->
 
-# The Parallel Stack Loading Problem Minimizing the Number of Blockings 
+# The Parallel Stack Loading Problem  
 
 Mohamed ElWakil, Production Engineering and Mechanical Design Department, Faculty of Engineering, Tanta University, Tanta, Egypt 
 
@@ -38,10 +38,9 @@ Let's say we have a group of items with $N = 6$ to be stacked in a storage bay w
 ```
 [4] <-- [1] <-- [6] <-- [2] <-- [3] <-- [5]
 ```
-Item 4 is the first to arrive, then item 1 until item 5 is the last to arrive. Each item is labelled with its retrieval order as we say item $p_i$. Based on that, item 6 is the third to
-arrive and the last one to be retrieved. A number of different solutions can be generated for stacking the mentioned items. For example, 
+Each item is characterised by two intergers: an arrival order $i$ and retrieval order $p_i$. Graphically, for ease of notatin, each item is labelled with its retrieval order. For instance, we say item 1 (or item [4]) is the first one to arrive. In the same way, the second arriving item is item 2 (or item [1]) and item 6 (or item [5]) is the last to arrive. A number of different solutions can be generated for stacking the mentioned items. For example, 
 
-##### Storage bay (solution)
+##### Storage bays (solutions)
 ```
 T3   |   [2]   [5]                                      T3   |   [5]   [2]
 T2   |   [1]   [3]                                      T2   |   [3]   [6]
@@ -52,10 +51,10 @@ T1   |   [4]   [6]                                      T1   |   [4]   [1]
 ```
 #
 
-For a pair of items, if item $i$ arrives earlier than item $j$ and both items are placed in the same stack, then $j$ will be above $i$. 
-If, in addition, $p_i < p_j$ (so $i$ must be retrieved before $j$), then $j$ would block $i$ if they are stacked together.
 
-For example, in solution 2 , if items 6 and 2 are in the same stack, item 2 is at tier 3 while item 6 is at tier 2 (because 6 arrives before 2). Since $p_6 < p_2$, item 2 must be relocated first to retrieve item 6; therefore item 2 is a blocking item. In solution 1, item 6 blocks item 1; in solution 2, it does not block any item.
+For a pair of items, if item $i$ arrives earlier than item $j$ ($i < j$) and both items are placed in the same stack, then $j$ will be above $i$. If, in addition, $p_i < p_j$ (so $i$ must be retrieved before $j$), then $j$ would block $i$ if they are stacked together.
+
+For example, in solution 2 , if items [6] and [1] are in the same stack, item [1] is at tier 1 while item [6] (because [1] arrives before [6]). In addition, item [6] must be relocated first to retrieve item [1]; therefore item [6] is a blocking item. In solution 1, item [6] does not block any item.
 
 ---
 
@@ -72,13 +71,13 @@ c_{ij} =
 \qquad \forall\ 1 \le i < j \le N.
 $$
 
-This parameter is derived from the retrieval order only and does not depend on the solution.
+This parameter is derived from the arrival and retrieval orders only and does not depend on the solution.
 
 ---
 
 ## Decision Variables
 
-We introduce the following binary decision variables:
+We introduce the following binary decision variable:
 
 $$
 x_{is} =
@@ -86,8 +85,10 @@ x_{is} =
 1, & \text{if item $i$ is stored in stack $s$}, \\
 0, & \text{otherwise}
 \end{cases}
-\qquad \forall i=1,\dots,N,\ s=1,\dots,S.
+\qquad \forall\ i=1,\dots,N,\forall\ s=1,\dots,S.
 $$
+
+And the following binary derived variable: 
 
 $$
 y_{ij} =
@@ -98,73 +99,42 @@ y_{ij} =
 \qquad \forall\ 1 \le i < j \le N.
 $$
 
+
+There are two ways to link $y_{ij}$ with $x_i$ and $x_j$: 
+
+#### Formulation 1 — Non-linear MIQP
+
+This compact formulation uses bilinear products:
+
 $$
-w_{ijs} =
-\begin{cases}
-1, & \text{if items $i$ and $j$ are both assigned to stack $s$}, \\
-0, & \text{otherwise}
-\end{cases}
-\qquad \forall\ 1 \le i < j \le N,\ s=1,\dots,S.
+y_{ij} = \sum_{s=1}^S x_{is} \cdot x_{js}, \quad \forall\ 1 \leq i < j \leq N,
 $$
+
+
+This is simple but non-linear, and requires a solver that supports quadratic binary terms.
+
+#### Formulation 2 — Linearised MILP
+
+To avoid bilinear terms, we linearize the bilinear products as follows: 
+
+$$
+\begin{aligned}
+y_{ij} \ge x_{is} + x_{js} - 1,
+\qquad &\forall\ 1 \le i < j \le N.
+\end{aligned}
+$$
+
+These enforce $y_{ij}=1$ if both $i$ and $j$ are assigned to the same stack. This version is fully linear and can be solved with any MILP solver.
 
 ---
 
 ## Objective Function
 
-We present two solver formulations of the optimisation problem.
-
-### Formulation 1 — Non-linear MIQP
-
-This compact formulation uses bilinear products:
-
-$$
-y_{ij} = \sum_{s=1}^S x_{is} \cdot x_{js}, \quad \forall\ i < j,
-$$
-
 The objective counts blocking pairs:
 
 $$ 
-J(u)=\sum_{i < j} c_{ij}\, y_{ij}, \qquad \min_{u} J(u).
+J(u)=\sum_{i=1}^{N-1} \sum_{j=i+1}^{N} c_{ij}\, y_{ij}, \qquad \min_{u} J(u).
 $$
-
-This is simple but non-linear, and requires a solver that supports quadratic binary terms.
-
----
-
-### Formulation 2 — Linearised MILP
-
-To avoid bilinear terms, we introduce auxiliary binaries $w_{ijs} \in \{0,1\}$ for each pair $(i,j)$ and stack $s$:
-
-$$
-\begin{aligned}
-w_{ijs} &\le x_{is}, \\
-w_{ijs} &\le x_{js}, \\
-w_{ijs} &\ge x_{is} + x_{js} - 1,
-\qquad &\forall\ 1 \le i < j \le N,\ s=1,\dots,S.
-\end{aligned}
-$$
-
-These enforce $w_{ijs}=1$ if both $i$ and $j$ are assigned to stack $s$.
-
-Two equivalent options exist for the objective:
-
-- **Option A (with $y_{ij}$):**
-  
-$$
-y_{ij} = \sum_{s=1}^S w_{ijs}, \quad \forall i < j, \qquad y_{ij}\in\{0,1\},
-$$
-  
-$$
-J(u) = \sum_{i < j} c_{ij}\, y_{ij}, \qquad \min_{u} J(u).
-$$
-
-- **Option B (without $y_{ij}$):**
-  
-$$
-J(u) = \sum_{i < j} c_{ij} \sum_{s=1}^S w_{ijs}, \qquad \min_{u} J(u).
-$$
-
-This version is fully linear and can be solved with any MILP solver.
 
 ---
 
@@ -200,10 +170,9 @@ $$
 \sum_{i=1}^{N} [u_i = s] = T \quad \forall s \in \{1,\dots,S\}.
 $$
 
-where $u_i$ denotes the stack assigned to item $i$.
+where $u_i$ denotes the stack assigned to item $i$. Since the first-come-first-stacked policy is fulfilled, the items of the same stack are stored with the order of their arrival. In other words, the later arrival items are stacked above the earlier arrival ones. 
 
-
-
+---
 
 ## Instance data file
 
@@ -214,6 +183,8 @@ The second line contains $N$ the number of items to be stored.
 
 The third line contains $N$ space-separated integers, $p_1, p_2, \dots, p_N$,
 corresponding to the number of items represented by their retrieval order.
+
+---
 
 ## Solution file
 
@@ -235,24 +206,41 @@ A solution file lists the stack numbers $u_1, u_2, \dots, u_N$.
 1 1 2 3 3 1 2 3 3 1 2 2 
 ```
 
-$J(u) = 12$
+$J(u) = 10$
 
 ### Explanation
+
+##### Arrival order (instance) 
+```
+[7] <-- [11] <-- [8] <-- [3] <-- [10] <-- [1] <-- [2] <-- [9] <-- [6] <-- [12] <-- [4] <-- [5]
+```
+
+##### Storage bay (solution)
+```
+T4   |   [12]   [ 5]   [ 6]                                      
+T3   |   [ 1]   [ 4]   [ 9]                                  
+T2   |   [11]   [ 2]   [10]                                  
+T1   |   [ 7]   [ 8]   [ 3]                                   
+      ----------------                                  
+          S1     S2     S3                                
+```
+#
+
 
 Each stack is listed from bottom to top according to the arrival order.  
 Blocking pairs $(i,j)$ are identified whenever item $i$ is below item $j$ in the same stack and $p_i < p_j$ (i.e., item $i$ must be retrieved before item $j$).  
 
-- **Stack 1:** items [1, 2, 6, 10]  
-  Blocking pairs: **(1,2), (1,10), (2,10), (6,10)** → 4
+- **Stack 1:** items [7], [11], [1], [12]  
+  Blocking pairs: **(7,11), (7,12), (11,12), (1,12)** → 4
 
-- **Stack 2:** items [3, 7, 11, 12]  
-  Blocking pairs: **(7,11), (7,12), (11,12)** → 3
+- **Stack 2:** items [8], [2], [4], [5]  
+  Blocking pairs: **(2,4), (2,5), (4,5)** → 3
 
-- **Stack 3:** items [4, 5, 8, 9]  
-  Blocking pairs: **(4,5), (4,8), (4,9), (5,9), (8,9)** → 5
+- **Stack 3:** items [3], [10], [9], [6]  
+  Blocking pairs: **(3,10), (3,9), (3,6)** → 3
 
-The total number of blocking pairs is therefore $4+3+5=12$.  
-Hence, the objective value for this solution is $J(u)=12$.
+The total number of blocking pairs is therefore $4+3+3=10$.  
+Hence, the objective value for this solution is $J(u)=10$.
 
 ## Acknowledgement
 
