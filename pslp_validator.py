@@ -99,10 +99,19 @@ def score_J(u: list[int], p: list[int], S: int) -> int:
     stored bottom-to-top in arrival order.
     """
     N = len(u)
+    J = 0 
+
+        
+    for i in range(N - 1):
+        for j in range(i + 1, N):
+            if u[i] == u[j] and p[i] < p[j]:
+                J += 1
+    '''''
     stacks = defaultdict(list)
     for i in range(1, N + 1):     # arrival order
         stacks[u[i - 1]].append(i)
 
+    
     J = 0
     for s in range(1, S + 1):
         col = stacks[s]  # arrival-ordered list (bottom to top)
@@ -113,6 +122,8 @@ def score_J(u: list[int], p: list[int], S: int) -> int:
                 j = col[b]
                 if p[i - 1] < p[j - 1]:
                     J += 1
+    '''''
+    
     return J
 
 
