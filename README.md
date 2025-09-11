@@ -52,7 +52,7 @@ T1   |   [4]   [6]                                      T1   |   [4]   [1]
 
 For a pair of items, if item $i$ arrives earlier than item $j$ ($i < j$) and both items are placed in the same stack, then item $j$ will be above $i$. If, in addition, $p_i < p_j$ (so item $i$ must be retrieved before item $j$), then item $j$ would block item $i$ if they are stacked together.
 
-For example, in solution 2, items [6] and [1] are in the same stack. Item [1] is at tier 1 while item [6] is at tier 2 as item [1] arrives before item [6]. In addition, item [6] must be relocated first to retrieve item [1]; therefore item [6] is a blocking item. In solution 1, item [6] does not block any item.
+For example, in solution 2, items [1], [6] and [2] are in the same stack. Item [1] is at tier 1 while item [6] is at tier 2 and item [2] is at tier 1, as item [1] arrives before item [6] which arrives before item [2]. In addition, items [6] and [2] must be relocated first to retrieve item [1]; therefore items [6] and [2] are blocking items. In solution 1, item [6] does not block any item whilst item [2] blocks item [1].
 
 ---
 
