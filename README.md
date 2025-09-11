@@ -25,16 +25,19 @@ These relocations represent additional handling operations, and minimizing their
 
 ## Task
 
-The problem consists of determining how to stack the arriving items in a storage bay with a fixed area (defined by a number of horizontal tiers and vertical stacks) so that the number of blocking relations is minimized. 
+The problem consists of determining how to stack the arriving items in a storage bay with a fixed area (defined by a number of horizontal tiers and vertical stacks) so that the number of blocking pairs is minimized. 
 
 ## Detailed description
 
 The parallel stack loading problem considers stacking $N$ items. For each item, there is an arrival order $i$ and a retrieval order $p_i$; the larger the value of $p_i$, the later the retrieval date. The aim is to stack the items in a storage bay which is composed of $S$ vertical stacks, where a maximum of $T$ items can be stored in each stack.
 
 ### Key characterstics
-1- Items are assumed to have identical sizes and the individual slots of the storage bay mathce this size. 
+1- Items are assumed to have identical sizes and the individual slots of the storage bay match this size. 
+
 2- The bay is assumed to be empty at the beginning of the planning horizon. 
+
 3- The bay may be full after stacking all the items if $ST = N$. Alternatively, if $ST > N$, therfore the bay will not be fully occupied. 
+
 4- Items may or may not have unique retrieval orders i.e. more than one item may share the same retreival order. 
 
 ### Example - Full bay with unique retrieval orders 
@@ -131,7 +134,7 @@ These constraints enforce $y_{ij}=1$ if both $i$ and $j$ are assigned to the sam
 
 ## Objective Function
 
-The objective counts the number of pairs with a blocking relation and placed in the same stack:
+The objective counts the number of pairs that have a blocking relation and placed in the same stack:
 
 $$ 
 J(u)=\sum_{i=1}^{N-1} \sum_{j=i+1}^{N} c_{ij} \cdot y_{ij}, \qquad \min_{u} J(u).
@@ -159,15 +162,15 @@ $$
 
 ## Alternate Representation 
 
-A solution can also be represented as a vector $u$ which list the stack number where each item is stacked in the order of their arrival.
+A solution can also be represented as a vector $u$, which lists the stack number where each item is placed. The elements of vector $u$ are ordered according to the items’ arrival sequence:
 
 $$
 u = (u_1, u_2, \dots, u_N), \quad u_i \in \{1,\dots,S\}.
 $$
 
-Since the first-come-first-stacked policy is fulfilled, the items of the same stack are stored in the same order of their arrival. In other words, the later arriving items are stacked above the earlier ones. 
+Since the first-come-first-stacked policy is followed, the items assigned to the same stack are stored in their order of arrival. In other words, later arriving items are stacked above earlier ones.
 
-Considering the mentioned example, the solution vector $u$ for the solution 1 and solution 2 are as follows: 
+Considering the earlier mentioned example, the solution vector $u$ for the solution 1 and solution 2 are as follows: 
 
 **solution 1**: u = (1, 2, 2, 2, 1, 1)
 
@@ -188,7 +191,7 @@ The input data can be structured in a plain text.
 The first line of the input contains two space-separated integers, $T$ and
 $S$, where $T$ is the number of tiers, and $S$ is the number of stacks.
 
-The second line contains $N$ the number of items to be stored. 
+The second line contains a single integer, $N$, the number of items to be stored. 
 
 The third line contains $N$ space-separated integers, $p_1, p_2, \dots, p_N$,
 where $p_i$ denotes the retrieval order of item $i$ ($1$ = earliest, larger values = later). The order in which these integers are listed corresponds to their order of arrival. 
@@ -234,7 +237,7 @@ i      1      2      3      4      5      6      7      8      9      10      11
 p_i   [7]    [11]   [8]    [3]    [10]   [1]    [2]    [9]    [6]    [12]     [4]     [5]
 ```
 
-Regarding the solution file, $u$ can be converted into the following storage bay. 
+Regarding the solution file, $u$ can be converted into the following storage bay. Items with $u_i = 1$ are items [7], [11], [1], [2]. The same applies for other stacks. Each stack is filled with the corresponding items from bottom to top according to the arrival order.  
 
 ##### Storage bay (solution)
 ```
@@ -247,8 +250,6 @@ T1   |   [ 7]   [ 8]   [ 3]
 ```
 #
 
-Items with $u_i = 1$ are items [7], [11], [1], [2]. The same applies for other stacks. 
-Each stack is listed from bottom to top according to the arrival order.  
 Blocking pairs $(i,j)$ are identified whenever item $i$ is below item $j$ in the same stack and $p_i < p_j$ (i.e., item $i$ must be retrieved before item $j$).  
 
 - **Stack 1:** items [7], [11], [1], [12]  
