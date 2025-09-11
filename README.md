@@ -31,14 +31,14 @@ The problem consists of determining how to stack the arriving items in a storage
 
 The parallel stack loading problem considers stacking $N$ items. For each item, there is an arrival order $i$ and a retrieval order $p_i$; the larger the value of $p_i$, the later the retrieval date. The aim is to stack the items in a storage bay which is composed of $S$ vertical stacks, where a maximum of $T$ items can be stored in each stack.
 
-### Key characterstics
+### Key characteristics
 1- Items are assumed to have identical sizes and the individual slots of the storage bay match this size. 
 
 2- The bay is assumed to be empty at the beginning of the planning horizon. 
 
-3- The bay may be full after stacking all the items if $ST = N$. Alternatively, if $ST > N$, therfore the bay will not be fully occupied. 
+3- The bay may be full after stacking all the items if $ST = N$. Alternatively, if $ST > N$, therefore the bay will not be fully occupied. 
 
-4- Items may or may not have unique retrieval orders i.e. more than one item may share the same retreival order. 
+4- Items may or may not have unique retrieval orders i.e. more than one item may share the same retrieval order. 
 
 ### Example - Full bay with unique retrieval orders 
 Let's say we have a group of items with $N = 6$ to be stacked in a storage bay with $T = 3$ and $S = 2$ while the arrival order is as follows:
@@ -176,7 +176,7 @@ Considering the earlier mentioned example, the solution vector $u$ for the solut
 
 **solution 2**: u = (1, 1, 2, 1, 2, 2) 
 
-It is important to note that a vital condition for the solution represented by $u$ to be feasible is that a maixmum of $T$ items can share the same stack number since each stack can hold at most $T$ items, i.e.,
+It is important to note that a vital condition for the solution represented by $u$ to be feasible is that a maximum of $T$ items can share the same stack number since each stack can hold at most $T$ items, i.e.,
 
 $$
 \sum_{i=1}^{N} [u_i = s] \leq T \quad \forall s \in \{1,\dots,S\}.
@@ -230,7 +230,7 @@ $J(u) = 10$
 
 ### Explanation
 
-The first two lines of the instance defines $T = 4, S = 3$ and $N = 12$. The thrid line list the items in the order of their arrival order. 
+The first two lines of the instance define $T = 4, S = 3$ and $N = 12$. The third line listS the items in the order of their arrival order. 
 
 ##### Items 
 ```
