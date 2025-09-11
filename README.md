@@ -86,7 +86,7 @@ x_{is} =
 \qquad \forall\ i=1,\dots,N,\forall\ s=1,\dots,S.
 $$
 
-And the following binary derived variable: 
+We also define the following derived binary variable: 
 
 $$
 y_{ij} =
@@ -131,7 +131,7 @@ These enforce $y_{ij}=1$ if both $i$ and $j$ are assigned to the same stack. Thi
 The objective counts blocking pairs:
 
 $$ 
-J(u)=\sum_{i=1}^{N-1} \sum_{j=i+1}^{N} c_{ij}\, y_{ij}, \qquad \min_{u} J(u).
+J(u)=\sum_{i=1}^{N-1} \sum_{j=i+1}^{N} c_{ij} \cdot y_{ij}, \qquad \min_{u} J(u).
 $$
 
 ---
