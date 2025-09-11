@@ -30,33 +30,37 @@ The problem consists of determining how to stack the arriving items in a storage
 ## Detailed description
 
 The parallel stack loading problem considers stacking $N$ items. For each item, there is an arrival order $i$ and a retrieval order $p_i$; the larger the value of $p_i$, the later 
-the retrieval date. The objective is to stack the items in a storage bay which is empty at the beginning of the planning horizon. The storage bay is 
-composed of $S$ vertical stacks, where exactly $T$ items can be stored in each stack $(ST = N)$. 
+the retrieval date. The objective is to stack the items in a storage bay which is empty at the beginning of the planning horizon. The storage bay is composed of $S$ vertical stacks, where a maximum of $T$ items can be stored in each stack.
 
+### Key characterstics
+1- Items is assumed to have identical sizes and the individual slots of the storage bay mathces this size. 
+2- The bay is assumed to be empty at the beginning of the planning horizon. 
+3- The bay may be full after completing stacking all the items if $ST = N$. Another situation may occur if $ST > N$, therfore the bay will not be fully occupied. 
+4- Items may have or not duplicate retrieval order i.e. more than one item may share the same retreival order. 
+
+### Example - Full bay with unique retrieval orders 
 Let's say we have a group of items with $N = 6$ to be stacked in a storage bay with $T = 3$ and $S = 2$ while the arrival order is as follows:
 ```
-[4] <-- [1] <-- [6] <-- [2] <-- [3] <-- [5]
+$i$      1      2      3      4      5      6
+$p_i$   [4]    [1]    [6]    [2]    [3]    [5]
 ```
-Graphically, and for ease of notation, each item is labelled with its retrieval order in brackets. For instance, we say item 1 (or item [4]) is the first one to arrive. Similarly, the second arriving item is item 2 (or item [1]) and item 6 (or item [5]) is the last to arrive. A number of different solutions can be generated for stacking these items. For example, two possible solutions (storage bays) are shown. 
+Graphically, and for ease of notation, each item is labelled with its retrieval order in brackets. For instance, we say item [4] is the first one to arrive. Similarly, the second arriving item is item [1] and item [5] is the last to arrive. A number of different solutions can be generated for stacking these items. For example, two possible solutions (storage bays) are shown. 
 
 ```
-T3   |   [2]   [5]                                      T3   |   [5]   [2]
-T2   |   [1]   [3]                                      T2   |   [3]   [6]
-T1   |   [4]   [6]                                      T1   |   [4]   [1]
-      ----------------                                        ----------------
-          S1    S2                                                S1    S2
-        solution 1                                             solution 2 
+T3   |   [5]   [2]                                    T3   |   [2]   [5]                                      
+T2   |   [3]   [6]                                    T2   |   [1]   [3]                                      
+T1   |   [4]   [1]                                    T1   |   [4]   [6]                                      
+      ----------------                                      ----------------
+          S1    S2                                              S1    S2
+        solution 1                                           solution 2 
 ```
-#
 
+## Blocking Relation
 
 For a pair of items, if item $i$ arrives earlier than item $j$ ($i < j$) and both items are placed in the same stack, then item $j$ will be above $i$. If, in addition, $p_i < p_j$ (so item $i$ must be retrieved before item $j$), then item $j$ would block item $i$ if they are stacked together.
 
-For example, in solution 2, items [1], [6] and [2] are in the same stack. Item [1] is at tier 1 while item [6] is at tier 2 and item [2] is at tier 1, as item [1] arrives before item [6] which arrives before item [2]. In addition, items [6] and [2] must be relocated first to retrieve item [1]; therefore items [6] and [2] are blocking items. In solution 1, item [6] does not block any item whilst item [2] blocks item [1].
+For example, in solution 1, items [1], [6] and [2] are in the same stack. Item [1] is at tier 1 while item [6] is at tier 2 and item [2] is at tier 1, as item [1] arrives before item [6] which arrives before item [2]. In addition, items [6] and [2] must be relocated first to retrieve item [1]; therefore items [6] and [2] are blocking items. In solution 2, item [6] does not block any item whilst item [2] blocks item [1].
 
----
-
-## Blocking Relation
 
 For all pairs with $i<j$ (item $i$ arrives earlier than item $j$), define the blocking parameter
 
@@ -156,11 +160,12 @@ $$
 
 ## Alternate Representation 
 
-A solution can also be represented as a vector:
+A solution can also be represented as a vector $u$ which list the stack number where each item is stacked in the order of their arrival.
 
 $$
 u = (u_1, u_2, \dots, u_N), \quad u_i \in \{1,\dots,S\}.
 $$
+
 
 with
 
@@ -170,9 +175,21 @@ $$
 
 where $u_i$ denotes the stack assigned to item $i$. Since the first-come-first-stacked policy is fulfilled, the items of the same stack are stored with the order of their arrival. In other words, the later arriving items are stacked above the earlier ones. 
 
+A solution file lists the model indices 
+
+ in the order in which the 
+T
+ model units are to be assembled, one value per line.
+
 ---
 
 ## Instance data file
+
+The input data can be structured in a plain text. It would be important to emphasize that for an instance to be valid,
+>   TS=N.
+>   - Also remind the reader that the order in which the items are listed
+>   corresponds to their order of arrival.
+>   - Add a general example of the instance format, for clarity. 
 
 The first line of the input contains two space-separated integers, $T$ and
 $S$, where $T$ is the number of tiers, and $S$ is the number of stacks.
@@ -180,7 +197,12 @@ $S$, where $T$ is the number of tiers, and $S$ is the number of stacks.
 The second line contains $N$ the number of items to be stored. 
 
 The third line contains $N$ space-separated integers, $p_1, p_2, \dots, p_N$,
-where $p_i$ denotes the retrieval order of item $i$ ($1$ = earliest, larger values = later).
+where $p_i$ denotes the retrieval order of item $i$ ($1$ = earliest, larger values = later). The order in which these integers are listed corresponds to their order of arrival. 
+
+For example:
+$$
+T S  N  p_1 p_2 p_3 \dots p_n
+$$
 
 ---
 
@@ -208,10 +230,14 @@ $J(u) = 10$
 
 ### Explanation
 
+The first two lines of the instance defines $T = 4, S = 3$ and $N = 12$. The thrid line list the items in the order of their arrival order. 
+
 ##### Arrival order (instance) 
 ```
 [7] <-- [11] <-- [8] <-- [3] <-- [10] <-- [1] <-- [2] <-- [9] <-- [6] <-- [12] <-- [4] <-- [5]
 ```
+
+Regarding the solution file, $u$ can be converted into the following storage bay. 
 
 ##### Storage bay (solution)
 ```
@@ -224,7 +250,7 @@ T1   |   [ 7]   [ 8]   [ 3]
 ```
 #
 
-
+Items with $u_i = 1$ are items [7], [11], [1], [2]. The same applies for other stacks. 
 Each stack is listed from bottom to top according to the arrival order.  
 Blocking pairs $(i,j)$ are identified whenever item $i$ is below item $j$ in the same stack and $p_i < p_j$ (i.e., item $i$ must be retrieved before item $j$).  
 
