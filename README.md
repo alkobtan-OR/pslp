@@ -52,56 +52,109 @@ T1   |   [4]   [6]                                      T1   |   [4]   [1]
 ```
 #
 
-For a pair of items, if item $p_i$ arrives before item $p_j$, if both items are stored in the same stack, item $p_j$ will be at 
-a higher tier than item $i$. For instance, if items 6 and 2 are stacked in the same stack as in solution 2, item 2 is at tier 3 while item 6 is at tier 2 as item arrives before 
-item 6. Additionally if $p_i < p_j$, it means that item $i$ would be retrieved earlier than item $j$. To do so, item $j$ would be relocated to somewhere else
-first to retrieve item $i$. Therefore, item $j$ is called a blocking item. For example, item 6 blocks item 1 in solution 1, where it does not block any item in solution 2.  
+For a pair of items, if item $i$ arrives earlier than item $j$ and both items are placed in the same stack, then $j$ will be above $i$. 
+If, in addition, $p_i < p_j$ (so $i$ must be retrieved before $j$), then $j$ would block $i$ if they are stacked together.
+For example, in solution 2 , if items 6 and 2 are in the same stack, item 2 is at tier 3 while item 6 is at tier 2 (because 6 arrives before 2). Since $p_6 < p_2$, item 2 must be relocated first to retrieve item 6; therefore item 2 is a blocking item. In solution 1, item 6 blocks item 1; in solution 2, it does not block any item.
 
-Formally, the blocking relation is defined as:
+For all pairs with $i<j$ (item $i$ arrives earlier than item $j$), define the blocking parameter
 
 $$
 c_{ij} =
 \begin{cases}
-1, & \text{if item $i$ is below item $j$ in the same stack and $p_i < p_j$}, \\
+1, & \text{if } p_i < p_j, \\
+0, & \text{otherwise},
+\end{cases}
+\qquad \forall\, 1 \le i < j \le N.
+$$
+
+Let $y_{ij}=1$ if items $i$ and $j$ are stored in the same stack, and $y_{ij}=0$ otherwise (define $y_{ij}$ only for $i<j$).
+
+---
+## Objective Function
+
+We present two solver formulations of the optimisation problem.
+
+### Formulation 1 — Non-linear MIQP
+
+This compact formulation uses bilinear products:
+
+$$
+y_{ij} = \sum_{s=1}^S x_{is} \cdot x_{js}, \quad \forall i<j,
+$$
+
+where $y_{ij}=1$ if items $i$ and $j$ are stored in the same stack.
+
+The objective counts blocking pairs:
+
+$$ 
+\min_{u \in \mathcal{U}} J(u) = \sum_{i<j} c_{ij}\, y_{ij}. 
+$$
+
+This is simple but non-linear, and requires a solver that supports quadratic binary terms.
+
+---
+
+### Formulation 2 — Linearised MILP
+
+To avoid bilinear terms, introduce auxiliary binaries $w_{ijs} \in \{0,1\}$ for each pair $(i,j)$ and stack $s$:
+
+$$
+w_{ijs} \le x_{is}, \qquad
+w_{ijs} \le x_{js}, \qquad
+w_{ijs} \ge x_{is} + x_{js} - 1, \quad \forall i<j,\; \forall s.
+$$
+
+These enforce $w_{ijs}=1$ iff both $i$ and $j$ are assigned to stack $s$.
+
+Two equivalent options exist for the objective:
+
+- **Option A (with $y_{ij}$):**
+  
+$$
+y_{ij} = \sum_{s=1}^S w_{ijs}, \quad \forall i<j, \qquad y_{ij}\in\{0,1\},
+$$
+  
+$$
+J(u) = \sum_{i<j} c_{ij}\, y_{ij}, \qquad \min_{u} J(u).
+$$
+
+- **Option B (without $y_{ij}$):**
+  
+$$
+J(u) = \sum_{i<j} c_{ij} \sum_{s=1}^S w_{ijs}, \qquad \min_{u} J(u).
+$$
+
+This version is fully linear and can be solved with any MILP solver.
+
+---
+
+## Decision variables and constraints
+
+We define binary variables $x_{is}$ for each item $i$ and stack $s$:
+
+$$
+x_{is} =
+\begin{cases}
+1, & \text{if item $i$ is stored in stack $s$,} \\
 0, & \text{otherwise}.
 \end{cases}
 $$
 
-We define $y_{ij} = 1$ if items $i$ and $j$ are stored in the same stack, and $y_{ij} = 0$ otherwise.
+These satisfy the following constraints:
 
-The total number of blockings in a solution $u$ is:
-
+- Each item is placed in exactly one stack:
+  
 $$
-J(u) = \sum_{i=1}^N \sum_{j=1}^N c_{ij}\, y_{ij}
-$$
-
-The optimisation problem is therefore:
-
-$$
-\min_{u} J(u)
+\sum_{s=1}^S x_{is} = 1 \quad \forall i.
 $$
 
-A second decision variable is defined as $x_{is} = 1$ if item $i$ is stored in stack $s$, and $x_{is} = 0$ otherwise. These variables satisfy the following constraints:
-
-Each item is placed in exactly one stack:
-
+- Each stack contains exactly $T$ items:
+  
 $$
-\sum_{s=1}^S x_{is} = 1 \quad \forall i
+\sum_{i=1}^N x_{is} = T \quad \forall s.
 $$
 
-Each stack contains exactly $T$ items:
-
-$$
-\sum_{i=1}^N x_{is} = T \quad \forall s
-$$
-
-Relation between $y_{ij}$ and $x_{is}$:
-
-$$
-y_{ij} = \sum_{s=1}^S x_{is} \cdot x_{js}
-$$
-
-Finally, a solution can also be represented as a vector:
+Finally, a solution can also be represented as a vector
 
 $$
 u = (u_1, u_2, \dots, u_N), \quad u_i \in \{1,\dots,S\},
@@ -110,13 +163,10 @@ $$
 with
 
 $$
-\sum_{i=1}^{N} [u_i = s] = T \quad \forall\ 1 \leq s \leq S
+\sum_{i=1}^{N} [u_i = s] = T \quad \forall\, s \in \{1,\dots,S\},
 $$
 
 where $u_i$ denotes the stack assigned to item $i$.
-
-
-
 
 ## Instance data file
 
