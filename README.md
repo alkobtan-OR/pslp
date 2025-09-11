@@ -37,7 +37,7 @@ Let's say we have a group of items with $N = 6$ to be stacked in a storage bay w
 ```
 [4] <-- [1] <-- [6] <-- [2] <-- [3] <-- [5]
 ```
-Graphically, and for ease of notation, each item is labelled with its retrieval order in brackets. For instance, we say item 1 (or item [4]) is the first one to arrive. Similarly, the second arriving item is item 2 (or item [1]) and item 6 (or item [5]) is the last to arrive. A number of different solutions can be generated for stacking the mentioned items. For example, two different solutions (storage bays) are shown. 
+Graphically, and for ease of notation, each item is labelled with its retrieval order in brackets. For instance, we say item 1 (or item [4]) is the first one to arrive. Similarly, the second arriving item is item 2 (or item [1]) and item 6 (or item [5]) is the last to arrive. A number of different solutions can be generated for stacking these items. For example, two possible solutions (storage bays) are shown. 
 
 ```
 T3   |   [2]   [5]                                      T3   |   [5]   [2]
@@ -52,7 +52,7 @@ T1   |   [4]   [6]                                      T1   |   [4]   [1]
 
 For a pair of items, if item $i$ arrives earlier than item $j$ ($i < j$) and both items are placed in the same stack, then item $j$ will be above $i$. If, in addition, $p_i < p_j$ (so item $i$ must be retrieved before item $j$), then item $j$ would block item $i$ if they are stacked together.
 
-For example, in solution 2, items [6] and [1] are in the same stack. Item [1] is at tier 1 while item [6] as item [1] arrives before item [6]. In addition, item [6] must be relocated first to retrieve item [1]; therefore item [6] is a blocking item. In solution 1, item [6] does not block any item.
+For example, in solution 2, items [6] and [1] are in the same stack. Item [1] is at tier 1 while item [6] is at tier 2 as item [1] arrives before item [6]. In addition, item [6] must be relocated first to retrieve item [1]; therefore item [6] is a blocking item. In solution 1, item [6] does not block any item.
 
 ---
 
@@ -122,13 +122,13 @@ y_{ij} \ge x_{is} + x_{js} - 1,
 \end{aligned}
 $$
 
-These constraints enforce $y_{ij}=1$ if both $i$ and $j$ are assigned to the same stack. This version is fully linear and can be solved with any MILP solver.
+These constraints enforce $y_{ij}=1$ if both $i$ and $j$ are assigned to the same stack (i.e. $x_{is} = x_{js} = 1$). This version is fully linear and can be solved with any MILP solver.
 
 ---
 
 ## Objective Function
 
-The objective counts blocking pairs:
+The objective counts the number of pairs with a blocking relation and placed in the same stack:
 
 $$ 
 J(u)=\sum_{i=1}^{N-1} \sum_{j=i+1}^{N} c_{ij} \cdot y_{ij}, \qquad \min_{u} J(u).
@@ -143,13 +143,13 @@ The decision variables satisfy the following constraints:
 - Each item is placed in exactly one stack:
   
 $$
-\sum_{s=1}^S x_{is} = 1 \quad \forall i.
+\sum_{s=1}^S x_{is} = 1 \quad \forall i \in \{1, \dots, N\}.
 $$
 
 - Each stack contains exactly $T$ items:
   
 $$
-\sum_{i=1}^N x_{is} = T \quad \forall s.
+\sum_{i=1}^N x_{is} = T \quad \forall s \in \{1, \dots, S\}.
 $$
 
 ---
