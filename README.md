@@ -54,22 +54,61 @@ T1   |   [4]   [6]                                      T1   |   [4]   [1]
 
 For a pair of items, if item $i$ arrives earlier than item $j$ and both items are placed in the same stack, then $j$ will be above $i$. 
 If, in addition, $p_i < p_j$ (so $i$ must be retrieved before $j$), then $j$ would block $i$ if they are stacked together.
+
 For example, in solution 2 , if items 6 and 2 are in the same stack, item 2 is at tier 3 while item 6 is at tier 2 (because 6 arrives before 2). Since $p_6 < p_2$, item 2 must be relocated first to retrieve item 6; therefore item 2 is a blocking item. In solution 1, item 6 blocks item 1; in solution 2, it does not block any item.
+
+---
+
+## Blocking Relation
 
 For all pairs with $i<j$ (item $i$ arrives earlier than item $j$), define the blocking parameter
 
 $$
 c_{ij} =
 \begin{cases}
-1, & \text{if } p_i < p_j, \\
-0, & \text{otherwise},
+1, & \text{if } p_i < p_j \\
+0, & \text{otherwise}
 \end{cases}
-\qquad \forall\, 1 \le i < j \le N.
+\qquad \forall\ 1 \le i < j \le N.
 $$
 
-Let $y_{ij}=1$ if items $i$ and $j$ are stored in the same stack, and $y_{ij}=0$ otherwise (define $y_{ij}$ only for $i<j$).
+This parameter is derived from the retrieval order only and does not depend on the solution.
 
 ---
+
+## Decision Variables
+
+We introduce the following binary decision variables:
+
+$$
+x_{is} =
+\begin{cases}
+1, & \text{if item $i$ is stored in stack $s$}, \\
+0, & \text{otherwise}
+\end{cases}
+\qquad \forall i=1,\dots,N,\ s=1,\dots,S.
+$$
+
+$$
+y_{ij} =
+\begin{cases}
+1, & \text{if items $i$ and $j$ are stored in the same stack}, \\
+0, & \text{otherwise}
+\end{cases}
+\qquad \forall\ 1 \le i < j \le N.
+$$
+
+$$
+w_{ijs} =
+\begin{cases}
+1, & \text{if items $i$ and $j$ are both assigned to stack $s$}, \\
+0, & \text{otherwise}
+\end{cases}
+\qquad \forall\ 1 \le i < j \le N,\ s=1,\dots,S.
+$$
+
+---
+
 ## Objective Function
 
 We present two solver formulations of the optimisation problem.
@@ -82,12 +121,10 @@ $$
 y_{ij} = \sum_{s=1}^S x_{is} \cdot x_{js}, \quad \forall\ i < j,
 $$
 
-where $y_{ij}=1$ if items $i$ and $j$ are stored in the same stack.
-
 The objective counts blocking pairs:
 
 $$ 
-J(u) = \sum_{i<j} c_{ij}\, y_{ij}, \qquad \min_{u} J(u). 
+J(u)=\sum_{i < j} c_{ij}\, y_{ij}, \qquad \min_{u} J(u).
 $$
 
 This is simple but non-linear, and requires a solver that supports quadratic binary terms.
@@ -96,51 +133,44 @@ This is simple but non-linear, and requires a solver that supports quadratic bin
 
 ### Formulation 2 — Linearised MILP
 
-To avoid bilinear terms, introduce auxiliary binaries $w_{ijs} \in \{0,1\}$ for each pair $(i,j)$ and stack $s$:
+To avoid bilinear terms, we introduce auxiliary binaries $w_{ijs} \in \{0,1\}$ for each pair $(i,j)$ and stack $s$:
 
 $$
-w_{ijs} \le x_{is}, \qquad
-w_{ijs} \le x_{js}, \qquad
-w_{ijs} \ge x_{is} + x_{js} - 1, \quad \forall i<j,\; \forall s.
+\begin{aligned}
+w_{ijs} &\le x_{is}, \\
+w_{ijs} &\le x_{js}, \\
+w_{ijs} &\ge x_{is} + x_{js} - 1,
+\qquad &\forall\ 1 \le i < j \le N,\ s=1,\dots,S.
+\end{aligned}
 $$
 
-These enforce $w_{ijs}=1$ iff both $i$ and $j$ are assigned to stack $s$.
+These enforce $w_{ijs}=1$ if both $i$ and $j$ are assigned to stack $s$.
 
 Two equivalent options exist for the objective:
 
 - **Option A (with $y_{ij}$):**
   
 $$
-y_{ij} = \sum_{s=1}^S w_{ijs}, \quad \forall i<j, \qquad y_{ij}\in\{0,1\},
+y_{ij} = \sum_{s=1}^S w_{ijs}, \quad \forall i < j, \qquad y_{ij}\in\{0,1\},
 $$
   
 $$
-J(u) = \sum_{i<j} c_{ij}\, y_{ij}, \qquad \min_{u} J(u).
+J(u) = \sum_{i < j} c_{ij}\, y_{ij}, \qquad \min_{u} J(u).
 $$
 
 - **Option B (without $y_{ij}$):**
   
 $$
-J(u) = \sum_{i<j} c_{ij} \sum_{s=1}^S w_{ijs}, \qquad \min_{u} J(u).
+J(u) = \sum_{i < j} c_{ij} \sum_{s=1}^S w_{ijs}, \qquad \min_{u} J(u).
 $$
 
 This version is fully linear and can be solved with any MILP solver.
 
 ---
 
-## Decision variables and constraints
+## Constraints
 
-We define binary variables $x_{is}$ for each item $i$ and stack $s$:
-
-$$
-x_{is} =
-\begin{cases}
-1, & \text{if item $i$ is stored in stack $s$,} \\
-0, & \text{otherwise}.
-\end{cases}
-$$
-
-These satisfy the following constraints:
+The decision variables satisfy the following constraints:
 
 - Each item is placed in exactly one stack:
   
@@ -154,19 +184,26 @@ $$
 \sum_{i=1}^N x_{is} = T \quad \forall s.
 $$
 
-Finally, a solution can also be represented as a vector
+---
+
+## Alternate Representation 
+
+A solution can also be represented as a vector:
 
 $$
-u = (u_1, u_2, \dots, u_N), \quad u_i \in \{1,\dots,S\},
+u = (u_1, u_2, \dots, u_N), \quad u_i \in \{1,\dots,S\}.
 $$
 
 with
 
 $$
-\sum_{i=1}^{N} [u_i = s] = T \quad \forall\, s \in \{1,\dots,S\},
+\sum_{i=1}^{N} [u_i = s] = T \quad \forall s \in \{1,\dots,S\}.
 $$
 
 where $u_i$ denotes the stack assigned to item $i$.
+
+
+
 
 ## Instance data file
 
@@ -198,12 +235,24 @@ A solution file lists the stack numbers $u_1, u_2, \dots, u_N$.
 1 1 2 3 3 1 2 3 3 1 2 2 
 ```
 
-$J(u) = 7$
+$J(u) = 12$
 
 ### Explanation
 
-There are $7$ blocking items. Items 7, 11, 1, 12 are stacked in stack 1 following the same order from bottom to top since it is the order of arrival. Such stack has two blocking
-items: items 11 and 12. Stack 2: blocking items 4 and 5. Stack 3: blocking items 6, 9, and 10. 
+Each stack is listed from bottom to top according to the arrival order.  
+Blocking pairs $(i,j)$ are identified whenever item $i$ is below item $j$ in the same stack and $p_i < p_j$ (i.e., item $i$ must be retrieved before item $j$).  
+
+- **Stack 1:** items [1, 2, 6, 10]  
+  Blocking pairs: **(1,2), (1,10), (2,10), (6,10)** → 4
+
+- **Stack 2:** items [3, 7, 11, 12]  
+  Blocking pairs: **(7,11), (7,12), (11,12)** → 3
+
+- **Stack 3:** items [4, 5, 8, 9]  
+  Blocking pairs: **(4,5), (4,8), (4,9), (5,9), (8,9)** → 5
+
+The total number of blocking pairs is therefore $4+3+5=12$.  
+Hence, the objective value for this solution is $J(u)=12$.
 
 ## Acknowledgement
 
