@@ -176,7 +176,7 @@ Considering the earlier mentioned example, the solution vector $u$ for the solut
 
 **solution 2**: u = (1, 1, 2, 1, 2, 2) 
 
-It is important to note that a vital condition for the solution represented by $u$ to be feasible is that each stack can hold at most $T$ items, i.e.,
+It is important to note that a vital condition for the solution represented by $u$ to be feasible is that a maixmum of $T$ items can share the same stack number since each stack can hold at most $T$ items, i.e.,
 
 $$
 \sum_{i=1}^{N} [u_i = s] \leq T \quad \forall s \in \{1,\dots,S\}.
